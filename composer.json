@@ -1,0 +1,27 @@
+{
+    "name": "qklin/laravel-auto-router",
+    "description": "laravel/lumen 注解自动路由",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "qklin",
+            "email": "qklandy@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": "^7.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "6.5.14"
+    },
+    "autoload": {
+        "psr-4": {
+            "Qklin\\AutoRouter\\": "src/"
+        },
+        "files": [
+            "src/functions.php"
+        ]
+    }
+}
