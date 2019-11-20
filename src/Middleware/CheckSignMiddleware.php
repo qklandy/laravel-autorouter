@@ -26,7 +26,7 @@ class CheckSignMiddleware
         // 判断是否超时，超时返回失败
         $timeOut = (int)env('AR_CHECK_SIGN_TIMEOUT', 10);
         if ((int)$reqDdata['timestamp'] < time() - $timeOut) {
-            if ($this->app->bound('autorouter.logger')) {
+            if (app()->bound('autorouter.logger')) {
                 app('autorouter.logger')->arLog([
                     'position' => 'checksign',
                     'msg'      => '验签失败: 超时',
@@ -58,7 +58,7 @@ class CheckSignMiddleware
         $checkRes = $sign == $reqSign ? true : false;
 
         if (!$checkRes) {
-            if ($this->app->bound('autorouter.logger')) {
+            if (app()->bound('autorouter.logger')) {
                 app('autorouter.logger')->arLog([
                     'position' => 'checksign',
                     'msg'      => '验签失败: 不通过',

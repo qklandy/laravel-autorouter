@@ -38,7 +38,7 @@ class AutoRouter
         }
 
         // 记录日志
-        if ($this->app->bound('autorouter.logger')) {
+        if ($app->bound('autorouter.logger')) {
             app('autorouter.logger')->arLog([
                 'position' => 'autorouter',
                 'msg'      => '自动路由记录请求关键参数',

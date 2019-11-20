@@ -27,7 +27,7 @@ class InsideMiddleware
 
         // 验证
         if (!in_array($requestHost, $insideHosts)) {
-            if ($this->app->bound('autorouter.logger')) {
+            if (app()->bound('autorouter.logger')) {
                 app('autorouter.logger')->arLog([
                     'position' => 'inside',
                     'msg'      => '内网域名鉴权失败',
