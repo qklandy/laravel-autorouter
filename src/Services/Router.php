@@ -19,13 +19,13 @@ class Router
     {
         $app = app();
         $routers = $app->router->getRoutes();
+        if (!is_array($routers)) {
+            $routers = $routers->getRoutes();
+        }
 
         // 默认支持get和post
         $method = strtoupper($reqMethod);
         $supportMethod = ['get', 'post'];
-        if (!empty($controllerInfo['ar_method'])) {
-            $supportMethod = $controllerInfo['ar_method'];
-        }
 
         // 判断方式是否支持
         if (in_array($method, $supportMethod)) {
@@ -57,6 +57,16 @@ class Router
                 $errMsg = "该方法未被允许访问: [{$controllerInfo['action']}]";
             }
             throw new Exception($errMsg, -111);
+        }
+
+        // 处理请求方法
+        if (!empty($controllerInfo['ar_method'])) {
+            $supportMethod = $controllerInfo['ar_method'];
+        }
+
+        // 判断方式是否支持
+        if (!in_array(strtolower($method), $supportMethod)) {
+            throw new Exception("无法支持的请求方法", -113);
         }
 
         // 中断

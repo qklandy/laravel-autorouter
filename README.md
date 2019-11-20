@@ -103,10 +103,58 @@ public function detail()
 return [
     "middleware" => [  //中间件，目前只支持
         "controllers" => [ // 路由控制器路径 => 中间件
-            "bapi/wmapi/articles/college" => ["token", "validate"],
+            "h/module/ctl/action" => ["token", "validate"],
         ],
         "actions"     => [ // 控制器方法 => 中间件
         ]
     ]
 ];
+```
+
+#### laravel版本在Application可以注入configure方法
+```
+/**
+ * 加载配置文件
+ * @param $name
+ */
+public function configure($name)
+{
+    if (isset($this->loadedConfigurations[$name])) {
+        return;
+    }
+
+    $this->loadedConfigurations[$name] = true;
+
+    $path = $this->getConfigurationPath($name);
+
+    if ($path && is_file($path)) {
+        $this->make('config')->set($name, require $path);
+    }
+}
+
+/**
+ * 获取配置路径
+ * @param null $name
+ * @return string
+ */
+public function getConfigurationPath($name = null)
+{
+    if (!$name) {
+        $appConfigDir = $this->basePath('config') . '/';
+
+        if (file_exists($appConfigDir)) {
+            return $appConfigDir;
+        } else if (file_exists($path = __DIR__ . '/../config/')) {
+            return $path;
+        }
+    } else {
+        $appConfigPath = $this->basePath('config') . '/' . $name . '.php';
+
+        if (file_exists($appConfigPath)) {
+            return $appConfigPath;
+        } else if (file_exists($path = __DIR__ . '/../config/' . $name . '.php')) {
+            return $path;
+        }
+    }
+}
 ```
