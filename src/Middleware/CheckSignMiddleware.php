@@ -26,11 +26,15 @@ class CheckSignMiddleware
         // 判断是否超时，超时返回失败
         $timeOut = (int)env('AR_CHECK_SIGN_TIMEOUT', 10);
         if ((int)$reqDdata['timestamp'] < time() - $timeOut) {
-            if (app()->bound('Psr\Log\LoggerInterface')) {
-                app('Psr\Log\LoggerInterface')->info('checksign timeout', [
-                    'reqData' => $reqLogData,
-                    'time'    => time(),
-                    'reqTime' => $reqDdata['timestamp']
+            if ($this->app->bound('autorouter.logger')) {
+                app('autorouter.logger')->arLog([
+                    'position' => 'checksign',
+                    'msg'      => '验签失败: 超时',
+                    'params'   => [
+                        'reqData' => $reqLogData,
+                        'time'    => time(),
+                        'reqTime' => $reqDdata['timestamp']
+                    ]
                 ]);
             }
             return response("Check Sign Authentication failure, timestamp has timeout", 401);
@@ -54,12 +58,16 @@ class CheckSignMiddleware
         $checkRes = $sign == $reqSign ? true : false;
 
         if (!$checkRes) {
-            if (app()->bound('Psr\Log\LoggerInterface')) {
-                app('Psr\Log\LoggerInterface')->info('checksign is invalid', [
-                    'reqData'  => $reqLogData,
-                    'signData' => $reqDdata,
-                    'sign'     => $sign,
-                    'reqSign'  => $reqSign
+            if ($this->app->bound('autorouter.logger')) {
+                app('autorouter.logger')->arLog([
+                    'position' => 'checksign',
+                    'msg'      => '验签失败: 不通过',
+                    'params'   => [
+                        'reqData'  => $reqLogData,
+                        'signData' => $reqDdata,
+                        'sign'     => $sign,
+                        'reqSign'  => $reqSign
+                    ]
                 ]);
             }
         }

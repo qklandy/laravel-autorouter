@@ -163,31 +163,35 @@ class Router
                 continue;
             }
 
-            $docParams = app('autorouter.annotate')->parseLines($docComment)->parseSimple();
+            $annotateService = app('autorouter.annotate');
+            $docParams = $annotateService->parseLines($docComment)->parseSimple();
+            $arRouter = $annotateService->getDocVar('router');
 
-            if (isset($docParams['arRouter'])) {
+            if (isset($docParams[$arRouter])) {
 
                 // 路由请求的真正方法
-                if ($docParams['arRouter'] && $docParams['arRouter'] == $action) {
-                    $controllerInfo['router_action'] = $docParams['arRouter'];
+                if ($docParams[$arRouter] && $docParams[$arRouter] == $action) {
+                    $controllerInfo['router_action'] = $docParams[$arRouter];
                     $controllerInfo['action'] = $refMethod->name;
 
                     $hasMatch = true;
                 }
 
-                if (!$docParams['arRouter'] && $refMethod->name == $action) {
+                if (!$docParams[$arRouter] && $refMethod->name == $action) {
                     $controllerInfo['router_action'] = $refMethod->name;
 
                     $hasMatch = true;
                 }
 
                 if ($hasMatch) {
-                    $controllerInfo['ar_method'] = isset($docParams['arMethod'])
-                        ? ($docParams['arMethod']
-                            ? explode("|", strtolower($docParams['arMethod']))
+                    $arMethod = $annotateService->getDocVar('method');
+                    $arOnlyInside = $annotateService->getDocVar('only_inside');
+                    $controllerInfo['ar_method'] = isset($docParams[$arMethod])
+                        ? ($docParams[$arMethod]
+                            ? explode("|", strtolower($docParams[$arMethod]))
                             : [])
                         : [];
-                    $controllerInfo['ar_only_inside'] = isset($docParams['arOnlyInside']) ? 1 : 0;
+                    $controllerInfo['ar_only_inside'] = isset($docParams[$arOnlyInside]) ? 1 : 0;
                     break;
                 }
             }
@@ -295,19 +299,5 @@ class Router
         }
 
         return $method;
-    }
-
-    /**
-     * 记录请求
-     * @return string
-     */
-    public function reqLog($urlArr, $reqMethod)
-    {
-        if (app()->bound('Psr\Log\LoggerInterface')) {
-            app('Psr\Log\LoggerInterface')->info('auto-router', [
-                'uri'    => $urlArr,
-                'method' => $reqMethod
-            ]);
-        }
     }
 }

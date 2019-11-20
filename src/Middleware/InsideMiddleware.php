@@ -27,11 +27,15 @@ class InsideMiddleware
 
         // 验证
         if (!in_array($requestHost, $insideHosts)) {
-            if (app()->bound('Psr\Log\LoggerInterface')) {
-                app('Psr\Log\LoggerInterface')->info('内网域名鉴权失败', [
-                    'url'         => $request->fullUrl(),
-                    'requestHost' => $requestHost,
-                    'configHosts' => $configHosts
+            if ($this->app->bound('autorouter.logger')) {
+                app('autorouter.logger')->arLog([
+                    'position' => 'inside',
+                    'msg'      => '内网域名鉴权失败',
+                    'params'   => [
+                        'url'         => $request->fullUrl(),
+                        'requestHost' => $requestHost,
+                        'configHosts' => $configHosts
+                    ]
                 ]);
             }
             return response("Inside Authentication failure", 401);

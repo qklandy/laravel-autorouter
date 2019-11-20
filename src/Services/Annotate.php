@@ -6,6 +6,39 @@ class Annotate
 {
     private $_lines;
 
+    private $_docVars;
+
+    public function __construct()
+    {
+        $this->_docVars = [
+            'router'      => env('AR_DOCUMENT_ROUTER', 'arRouter'),
+            'method'      => env('AR_DOCUMENT_METHOD', 'arMethod'),
+            'only_inside' => env('AR_DOCUMENT_ONLY_INSIDE', 'arOnlyInside'),
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function getDocVar($key = null)
+    {
+        if (is_null($key)) {
+            return $this->_docVars;
+        }
+
+        return $this->_docVars[$key] ?? "";
+    }
+
+    /**
+     * 设置docvar
+     * @param $key
+     * @param $val
+     */
+    public function setDocVar($key, $val)
+    {
+        $this->_docVars[$key] = $val;
+    }
+
     /**
      * 解析注解
      * @param $doc

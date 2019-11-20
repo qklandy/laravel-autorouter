@@ -38,7 +38,16 @@ class AutoRouter
         }
 
         // 记录日志
-        $router->reqLog($urlArr, $reqMethod);
+        if ($this->app->bound('autorouter.logger')) {
+            app('autorouter.logger')->arLog([
+                'position' => 'autorouter',
+                'msg'      => '自动路由记录请求关键参数',
+                'params'   => [
+                    'uri'    => $urlArr,
+                    'method' => $reqMethod
+                ]
+            ]);
+        }
 
         // pathinfo 移除第一个斜杆
         $pathInfo = substr($urlArr[0], 1);
