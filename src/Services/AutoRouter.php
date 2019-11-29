@@ -63,12 +63,8 @@ class AutoRouter
         // 获取路由解析控制器信息
         $controllerInfo = $router->controller($pathInfo, $pathInfoArr);
 
-        // 只处理新路由前缀 可兼容原本的路由配置
-        $prefixs = explode(
-            ",",
-            env('LARAVEL_ORIGIN_HTTP_PREFIX', 'h') . "," . env('AUTOROUTER_MODULE_HTTP_PREFIX', 'm,inside')
-        );
-        if (in_array($controllerInfo['prefix'], $prefixs)) {
+        // 添加路由信息
+        if ($controllerInfo['class']) {
             $router->addRoute($controllerInfo, $reqMethod);
         }
     }

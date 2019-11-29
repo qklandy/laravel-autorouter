@@ -235,12 +235,14 @@ class Router
         $prefix = strtolower(array_splice($pathInfoArr, 0, 1)[0]);
 
         // 获取控制器类
+        $ctlClass = "";
+
         // app/http目录下
-        if ($prefix == env('LARAVEL_ORIGIN_HTTP_PREFIX', 'h')) {
+        if (in_array($prefix, $this->getPrefixs('http'))) {
             $ctlClass = "\\App\\Http\\Controllers\\" . implode("\\", $pathInfoArr) . "Controller";
         }
         // 自定义的结构模块目录下，默认App\Modules
-        if (in_array($prefix, explode(",", env('AUTOROUTER_MODULE_HTTP_PREFIX', 'm,inside')))) {
+        if (in_array($prefix, $this->getPrefixs('module'))) {
             $moduleName = $pathInfoArr[sizeof($pathInfoArr) - 2];
             $ctlName = $pathInfoArr[sizeof($pathInfoArr) - 1];
             array_splice($pathInfoArr, -2, 2, [$moduleName, "Controllers", $ctlName . "Controller"]);
@@ -299,5 +301,22 @@ class Router
         }
 
         return $method;
+    }
+
+    /**
+     * 获取路由前缀集合
+     * @param string $prefix
+     * @return array
+     */
+    public function getPrefixs($prefix = 'all')
+    {
+        $prefixStr = env('LARAVEL_ORIGIN_HTTP_PREFIX', 'h') . "," . env('AUTOROUTER_MODULE_HTTP_PREFIX', 'm,inside');
+        if ($prefix == 'http') {
+            $prefixStr = env('LARAVEL_ORIGIN_HTTP_PREFIX', 'h');
+        } else if ($prefix == 'module') {
+            $prefixStr = env('AUTOROUTER_MODULE_HTTP_PREFIX', 'm,inside');
+        }
+        $prefixs = explode(",", $prefixStr);
+        return $prefixs;
     }
 }
