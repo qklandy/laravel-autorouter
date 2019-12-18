@@ -25,7 +25,7 @@ class Router
 
         // 默认支持get和post
         $method = strtoupper($reqMethod);
-        $supportMethod = ['get', 'post'];
+        $supportMethod = explode(",", env('AUTOROUTER_HTTP_DEFAULT_MEHOTDS', 'get,post,options,head'));
 
         // 判断方式是否支持
         if (in_array($method, $supportMethod)) {
