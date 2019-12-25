@@ -69,6 +69,11 @@ class Router
             throw new Exception("无法支持的请求方法", -113);
         }
 
+        // 判断方式是否废弃
+        if ($controllerInfo['ar_deprecated']) {
+            throw new Exception("该方法已废弃", -116);
+        }
+
         // 中断
         $this->interrupt($controllerInfo);
 
@@ -186,12 +191,14 @@ class Router
                 if ($hasMatch) {
                     $arMethod = $annotateService->getDocVar('method');
                     $arOnlyInside = $annotateService->getDocVar('only_inside');
+                    $deprecated = $annotateService->getDocVar('deprecated');
                     $controllerInfo['ar_method'] = isset($docParams[$arMethod])
                         ? ($docParams[$arMethod]
                             ? explode("|", strtolower($docParams[$arMethod]))
                             : [])
                         : [];
                     $controllerInfo['ar_only_inside'] = isset($docParams[$arOnlyInside]) ? 1 : 0;
+                    $controllerInfo['ar_deprecated'] = isset($docParams[$deprecated]) ? 1 : 0;
                     break;
                 }
             }

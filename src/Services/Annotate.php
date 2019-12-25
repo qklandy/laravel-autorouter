@@ -14,6 +14,7 @@ class Annotate
             'router'      => env('AR_DOCUMENT_ROUTER', 'arRouter'),
             'method'      => env('AR_DOCUMENT_METHOD', 'arMethod'),
             'only_inside' => env('AR_DOCUMENT_ONLY_INSIDE', 'arOnlyInside'),
+            'deprecated'  => env('AR_DOCUMENT_DEPRECATED', 'deprecated'),
         ];
     }
 
